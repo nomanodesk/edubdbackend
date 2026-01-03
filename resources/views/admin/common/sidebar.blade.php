@@ -35,7 +35,7 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="">
+      <a class="nav-link" href="{{route('notice_boards.index')}}">
         <span class="menu-title">Notice Board Manager</span>
         <i class="mdi mdi-file-document-box menu-icon"></i>
       </a>

@@ -54,8 +54,7 @@
           <input type="text" class="form-control" id="exampleInputEmail3" name='uid'>
         </div>
         <input type="hidden" name='institution_id' value="{{Auth::user()->Institution->id}}">
-        <div class="form-group">
-
+        <!-- <div class="form-group">
           <div class="form-group">
             <label>Student Pic</label>
             <div class="input-group col-xs-12">
@@ -63,9 +62,7 @@
                 <input type="file" id="appLogo" class="form-control" name="studentImage" placeholder="Student Pic here">
               </span>
             </div>
-          </div>
-
-
+          </div> -->
           <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
           <button class="btn btn-light">Cancel</button>
       </form>
