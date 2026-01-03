@@ -57,8 +57,10 @@
                                     @endif
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                            <a class="btn btn-gradient-light btn-rounded btn-fw btn-sm" href="{{route('student_profiles.edit',$applinkapp->id)}}">Profile Data</a>
+                                            
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_profiles.edit',$applinkapp->id)}}">Profile Data</a>
                                             <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_school_data.edit',$applinkapp->id)}}">Class Data</a>
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->id)}}">Send Notice</a>
                                         </div>
                                         <!-- <div class="dropdown dropstart">
                                             <a class="btn btn-info btn-sm, dropdown-toggle dropdown-toggle-split" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">

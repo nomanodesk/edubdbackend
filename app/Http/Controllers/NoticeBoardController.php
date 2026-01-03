@@ -25,6 +25,13 @@ class NoticeBoardController extends Controller
             return view('admin.notices.noticeboard', compact('noticeboard'));
         }
     }
+    public function noticepage(Request $request)
+    {
+        $student = StudentProfile::where('id', $request->id)->get();
+     
+        return view('admin.notices.studentnotice', compact('student'));
+       
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -120,6 +127,72 @@ class NoticeBoardController extends Controller
         if ($jsonResponse['statusCode'] == 'S1000') {
             // print_r($jsonResponse);
             return redirect()->route('notice_boards.index')->with('success', 'SMS Sent Successfully || '.$jsonResponse['statusDetail'].' || '.$jsonResponse['statusCode'])->withInput();
+        } 
+        // else if ($jsonResponse['statusCode'] == 'E1300') {
+        //     return back()->with('error', 'ERROR SENDING SMS!!! PLEASE CONTACT APPLNK SUPPORT WITH ERROR CODE : ' . $jsonResponse['statusCode'])->withInput();
+        // }
+        // else if ($jsonResponse['statusCode'] == 'E1311') {
+        //     return back()->with('error', 'ERROR SENDING SMS!!! PLEASE CONTACT APPLNK SUPPORT WITH ERROR CODE : ' . $jsonResponse['statusCode'])->withInput();
+        // }
+    }
+    // elseif($operator == 'Robi'){
+    //     $response = $client->post('https://developer.bdapps.com/sms/send', [
+    //         "json" => [
+    //             "version" => "1.0",
+    //             "applicationId" => "$appID",
+    //             "password" => "$appPass",
+    //             "message" => "$content",
+    //             "destinationAddresses" => [
+    //                 "tel:all"
+    //             ]
+
+    //         ]
+    //     ]);
+    //     $jsonResponse = json_decode($response->getBody(), true);
+    //     // print_r($jsonResponse);
+    //     // if ($jsonResponse['statusCode'] == 'S1000') {
+    //     //     // print_r($jsonResponse);
+    //     //     return redirect()->route('apps.index')->with('success', 'SMS Sent Successfully || '.$jsonResponse['statusDetail'].' || '.$jsonResponse['statusCode'])->withInput();
+    //     // }
+    //     // else if ($jsonResponse['statusCode'] == 'E1311') {
+    //     //     return back()->with('error', 'ERROR SENDING SMS!!! PLEASE CONTACT BDAPPS SUPPORT WITH ERROR CODE : ' . $jsonResponse['statusCode'])->withInput();
+    //     // }
+    //  }
+    }
+    }
+    public function sendStudentNotice(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'notice' => 'required',
+        ]);
+        $content = $request->input('notice');
+       
+        $student = StudentProfile::where('id', $request->input('student_id'))->get();
+        foreach ($student as $row) {
+            $operator = $row['operator_id'];
+            $contact = $row['contactNo'];
+        $client = new Client();
+        if($operator == 'Banglalink'){
+        $response = $client->post('https://api.applink.com.bd/sms/send', [
+            "json" => [
+                "version" => "1.0",
+                "applicationId" => "APP_003242",
+                "password" => "5538bf24fb2c913ed908b7fa22e54447",
+                "message" => "$content",
+                "destinationAddresses" => [
+                    "tel:88$contact"
+                ]
+
+            ]
+        ]);
+    
+        $jsonResponse = json_decode($response->getBody(), true);
+       
+        // print_r($jsonResponse);
+        if ($jsonResponse['statusCode'] == 'S1000') {
+            // print_r($jsonResponse);
+            return redirect()->route('student_profiles.index')->with('success', 'SMS Sent Successfully || '.$jsonResponse['statusDetail'].' || '.$jsonResponse['statusCode'])->withInput();
         } 
         // else if ($jsonResponse['statusCode'] == 'E1300') {
         //     return back()->with('error', 'ERROR SENDING SMS!!! PLEASE CONTACT APPLNK SUPPORT WITH ERROR CODE : ' . $jsonResponse['statusCode'])->withInput();

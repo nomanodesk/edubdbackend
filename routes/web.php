@@ -41,3 +41,5 @@ Route::resource('student_school_data', StudentSchoolDataController::class);
 Route::post('/getsection', [ClassSectionController::class, 'index'])->name('getsection');
 Route::post('/addsection', [ClassSectionController::class, 'create'])->name('addsection');
 Route::post('/sendGenNotice', [NoticeBoardController::class, 'sendGenNotice'])->name('sendGenNotice');
+Route::get('/student-notice/{id}', [NoticeBoardController::class, 'noticepage'])->name('noticepage');
+Route::post('/sendStudentNotice', [NoticeBoardController::class, 'sendStudentNotice'])->name('sendStudentNotice');
