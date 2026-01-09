@@ -47,6 +47,7 @@ class InstitutionController extends Controller
             $request->validate([
                 
                 'instituteName' => 'required',
+                'nameCode' => 'required',
                 'contactNo' => ['required', 'string', 'max:11'],
                 'EIIN' => 'required',
                 'address' => 'required',

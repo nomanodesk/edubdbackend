@@ -33,13 +33,17 @@ Route::get('/home', [App\Http\Controllers\InstitutionController::class, 'dashboa
 
 Route::resource('institutions', InstitutionController::class);
 Route::resource('institute_classes', InstitueClassController::class);
+Route::get('/class-students/{id}', [InstitueClassController::class, 'classStudents'])->name('getClassStudents');
 Route::resource('class_sections', ClassSectionController::class);
 Route::resource('student_profiles', StudentProfileController::class);
 Route::resource('notice_boards', NoticeBoardController::class);
 Route::post('/addstudentclass', [StudentProfileController::class, 'addData'])->name('addstudentclass');
 Route::resource('student_school_data', StudentSchoolDataController::class);
-Route::post('/getsection', [ClassSectionController::class, 'index'])->name('getsection');
+Route::get('/getsection/{id}', [ClassSectionController::class, 'index'])->name('getsection');
 Route::post('/addsection', [ClassSectionController::class, 'create'])->name('addsection');
 Route::post('/sendGenNotice', [NoticeBoardController::class, 'sendGenNotice'])->name('sendGenNotice');
 Route::get('/student-notice/{id}', [NoticeBoardController::class, 'noticepage'])->name('noticepage');
 Route::post('/sendStudentNotice', [NoticeBoardController::class, 'sendStudentNotice'])->name('sendStudentNotice');
+Route::get('/class-notice/{id}', [NoticeBoardController::class, 'classnoticepage'])->name('classnoticepage');
+Route::post('/classStudentNotice', [NoticeBoardController::class, 'classStudentNotice'])->name('classStudentNotice');
+Route::get('/classNoticeReport', [NoticeBoardController::class, 'classnoticereport'])->name('classnoticereport');

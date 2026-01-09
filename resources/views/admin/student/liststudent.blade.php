@@ -59,41 +59,11 @@
                                         <div class="btn-group" role="group" aria-label="Basic example">
                                             
                                             <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_profiles.edit',$applinkapp->id)}}">Profile Data</a>
-                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_school_data.edit',$applinkapp->id)}}">Class Data</a>
-                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->id)}}">Send Notice</a>
+                                            <a class="btn btn-gradient-danger btn-rounded btn-fw btn-sm" href="{{route('student_school_data.edit',$applinkapp->id)}}">Class Data</a>
+                                            <a class="btn btn-gradient-info btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->id)}}">Send Notice</a>
                                         </div>
-                                        <!-- <div class="dropdown dropstart">
-                                            <a class="btn btn-info btn-sm, dropdown-toggle dropdown-toggle-split" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Select
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                <li><a class="dropdown-item btn-gradient-primary btn-sm" href="{{route('institute_classes.edit',$applinkapp->id)}}">Edit Class</a></li>
-                                                <li>
-                                                    <form action="{{route('getsection')}}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="institue_class_id" value="{{$applinkapp->id}}">
-                                                        <button class="dropdown-item btn-gradient-info btn-sm"> Manage Sections</button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div> -->
-                                        <!-- <div class="btn-group" role="group" aria-label="Basic example">
-                                            <div class="template-demo d-flex justify-content-between flex-nowrap">
-                                                <button type="button" class="btn btn-gradient-primary btn-rounded btn-icon">
-                                                    <i class="mdi mdi-home-outline"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-gradient-primary btn-rounded btn-icon">
-                                                    <i class="mdi mdi-home-outline"></i>
-                                                </button>
-                                                <form action="{{route('getsection')}}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="institue_class_id" value="{{$applinkapp->id}}">
-                                                    <button type="button" class="btn btn-gradient-primary btn-rounded btn-icon">
-                                                        <i class="mdi mdi-home-outline"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div> -->
+
+                                     
                                     </td>
                                 </tr>
                                 @endforeach

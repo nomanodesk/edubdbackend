@@ -26,7 +26,12 @@ class StudentProfileController extends Controller
         return view('admin.student.liststudent', compact('students'))
             ->with('i', (request()->input('page', 1) - 1) * 100);
     }
-
+    public function classStudents(Request $request)
+    {
+        $students = StudentProfile::orderBy('id', 'desc')->where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
+        return view('admin.student.liststudent', compact('students'))
+            ->with('i', (request()->input('page', 1) - 1) * 100);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -133,6 +138,7 @@ class StudentProfileController extends Controller
 
         $data2 = new StudentSchoolData;
         $data2->class_section_id = $request->input('class_section_id');
+        $data2->institue_class_id = $request->input('institue_class_id');
         $data2->student_id = $lastId;
         $data2->save();
         return redirect()->route('student_profiles.index')->with('success', 'Application has been created successfully.');

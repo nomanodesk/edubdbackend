@@ -74,6 +74,7 @@
         
         </div>
         <input type="hidden" name='institution_id' value="{{Auth::user()->Institution->id}}">
+       
         <div class="form-group">
           <div class="form-group">
             <label>Student Pic</label>
@@ -92,6 +93,7 @@
                             @endforeach
                             </select>
            </div>
+           <input type="hidden" name="institue_class_id" value="{{$data->institue_class_id}}">
           <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
           <button class="btn btn-light">Cancel</button>
       </form>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\InstituteClass;
 use App\Models\ClassSection;
-
 use Auth;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -15,17 +14,18 @@ class ClassSectionController extends Controller
 
     public function index(Request $request)
     {
-        // dd($request);
-        $classinfo = InstituteClass::where('id', $request->input('institue_class_id'))->get();
-        $classsections = ClassSection::where('institue_class_id', $request->input('institue_class_id'))->simplepaginate(100);
-        // dd($findinstitue);
-        $class_id = $request->input('institue_class_id');
+        // dd($request->input('id'));
+        $classinfo = InstituteClass::where('institution_id', Auth::user()->Institution->id)->get();
+        $classsections = ClassSection::where('institue_class_id', $request->id)->get();
+        // dd($classsections);
+        // $class_id = $request->input('id');
         if ($classsections->isEmpty()) {
             return view('admin.section.addsection',  compact('classinfo', 'classsections'));
         } else if ($classsections->isNotEmpty()){
             return view('admin.section.listsection', compact('classinfo', 'classsections'))->with('i', (request()->input('page', 1) - 1) * 100);
         }
     }
+    
     public function create(Request $request): View
     {
         
@@ -41,7 +41,6 @@ class ClassSectionController extends Controller
 
         // dd($request);
         $request->validate([
-
             'sectionName' => 'required',
             'class_shift' => 'required',
             'class_version' => 'required',
@@ -66,11 +65,11 @@ class ClassSectionController extends Controller
         }
     }
 
-
     public function edit(InstituteClass $instituteclass): View
     {
         return view('admin.class.editclass', compact('instituteclass'));
     }
+    
     public function destroy(InstituteClass $instituteclass): RedirectResponse
 
     {

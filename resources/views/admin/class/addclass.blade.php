@@ -62,7 +62,7 @@
                             </div>
                           </div>
                         </div>
-        <input type="hidden" name='institution_id' value="{{Auth::user()->id}}">
+        <input type="hidden" name='institution_id' value="{{Auth::user()->Institution->id}}">
         <div class="form-group">
           <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
           <!-- <button class="btn btn-light">Cancel</button> -->

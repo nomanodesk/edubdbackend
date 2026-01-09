@@ -1,6 +1,8 @@
 @extends('layouts.adminlayout')
 
 @section('content')
+@foreach($class_students as $data)
+@endforeach
 <div class="container mt-4">
     <!-- <div class="row">
         <div class="col-lg-12 margin-tb">
@@ -24,41 +26,35 @@
     <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Class List</h4>
-                    <a class="btn btn-gradient-primary btn-sm" href="{{ route('institute_classes.create') }}"> Add New Class</a>
-                    
+                    <h4 class="card-title">Student List</h4>
+                    <a class="btn btn-gradient-primary btn-sm" href="{{route('noticepage',$data->institue_class_id)}}"> Send Class Notice</a>
                     <div class="table-responsive">
                     <table class="table table-striped table-bordered table-sm" id="dataTables-example1">
                             <thead>
                                 <tr> <th>#</th>
                                     <th> Name </th>
-                                    <th> Level </th>
-                                    
+                                    <th> Address </th>
+                                    <th> Contact </th>
                                     <th> Action </th>
-
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($instituteclasses as $applinkapp)
+                                @foreach ($class_students as $applinkapp)
                                 <tr>
                                 <td>{{ ++$i }}</td>
-                                    <td>{{ $applinkapp->className }}</td>
-                                    <td>{{ $applinkapp->class_level }}</td>
-                                  <td>
-
-                                  <div class="btn-group" role="group" aria-label="Basic example">
-                                  <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('institute_classes.edit',$applinkapp->id)}}">Edit Class</a>
-                                  <a class="btn btn-gradient-success btn-rounded btn-fw btn-sm" href="{{route('getClassStudents',$applinkapp->id)}}">Manage Students</a>
-                                  <a class="btn btn-gradient-danger btn-rounded btn-fw btn-sm" href="{{route('getsection',$applinkapp->id)}}">Manage Sections</a>
-                                  <a class="btn btn-gradient-info btn-rounded btn-fw btn-sm" href="{{route('classnoticepage',$applinkapp->id)}}">Send Class Notice</a>
+                                    <td>{{ $applinkapp->studentName }}</td>
+                                    <td>{{ $applinkapp->address }}</td>
+                                    <td>{{ $applinkapp->contactNo }}</td>     
+                                    <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->student_id)}}">Send Notice</a>
                                         </div>
-                                  </td>
-                                    
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                        {!! $instituteclasses->links() !!}
+                      
                     </div>
                 </div>
             </div>

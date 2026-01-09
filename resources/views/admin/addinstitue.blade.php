@@ -23,6 +23,10 @@
           <input type="text" class="form-control" id="exampleInputName1" name='instituteName' required>
         </div>
         <div class="form-group">
+          <label for="exampleInputName1">Short Name</label>
+          <input type="text" class="form-control" id="exampleInputName1" name='nameCode' required>
+        </div>
+        <div class="form-group">
           <label for="exampleInputEmail3">EIIN</label>
           <input type="text" class="form-control" id="exampleInputEmail3" name='EIIN' required>
         </div>

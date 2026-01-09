@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\InstituteClass;
-
 use Auth;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +13,7 @@ class InstitueClassController extends Controller
 
     public function index()
     {
-        $instituteclasses = InstituteClass::where('institution_id', Auth::user()->id)->simplepaginate(100);
+        $instituteclasses = InstituteClass::where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
         // dd($findinstitue);
         if ($instituteclasses->isEmpty()) {
             return view('admin.class.addclass');
@@ -22,6 +21,7 @@ class InstitueClassController extends Controller
             return view('admin.class.listclass', compact('instituteclasses'))->with('i', (request()->input('page', 1) - 1) * 100);
         }
     }
+ 
     public function create()
     {
         return view('admin.class.addclass');
@@ -37,7 +37,7 @@ class InstitueClassController extends Controller
             'class_level' => 'required',
             'institution_id' => 'required',
         ]);
-        $findclasses = InstituteClass::where('institution_id', Auth::user()->id)->where('className', $request->input('className'))->get();
+        $findclasses = InstituteClass::where('institution_id', Auth::user()->Institution->id)->where('className', $request->input('className'))->get();
         if ($findclasses->isEmpty()) {
             $input = $request->all();
             InstituteClass::create($input);
@@ -59,5 +59,20 @@ class InstitueClassController extends Controller
         $instituteclass->delete();
         return redirect()->route('instituteclasses.index')
             ->with('success', 'Class deleted successfully');
+    }
+
+    public function classStudents( Request $request){
+        // dd($request);
+        $class_students = InstituteClass::select(
+            'institute_classes.*',
+            'student_profiles.*',
+            'student_school_data.*'
+        )
+        ->join('student_school_data','institute_classes.id', '=', 'student_school_data.institue_class_id')
+        ->join('student_profiles','student_profiles.id','=','student_school_data.student_id')
+        ->where('institute_classes.id', $request->id)
+        ->get();
+        // dd($class_students);
+        return view('admin.class.classStudents', compact('class_students'))->with('i', (request()->input('page', 1) - 1) * 100);
     }
 }

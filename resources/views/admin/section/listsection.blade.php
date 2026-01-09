@@ -58,8 +58,8 @@
                                         <td>
                                             <div class="template-demo">
                                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                                    <a class="btn btn-gradient-info btn-sm" href="{{route('institute_classes.edit',$applinkapp->id)}}">Edit </a>
-
+                                                    <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('institute_classes.edit',$applinkapp->id)}}">Edit </a>
+                                                    <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_school_data.index',$applinkapp->id)}}">View Students </a>
 
 
                                                 </div>

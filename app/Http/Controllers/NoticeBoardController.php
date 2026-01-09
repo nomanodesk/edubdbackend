@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstituteClass;
 use Illuminate\Http\Request;
 use App\Models\NoticeBoard;
 use App\Models\StudentProfile;
@@ -30,6 +31,24 @@ class NoticeBoardController extends Controller
         $student = StudentProfile::where('id', $request->id)->get();
      
         return view('admin.notices.studentnotice', compact('student'));
+       
+    }
+    public function classnoticepage(Request $request)
+    {
+        $class = InstituteClass::where('id', $request->id)->get();
+    //  dd($class);
+        return view('admin.notices.classnotice', compact('class'));
+       
+    }
+    public function classnoticereport(Request $request)
+    {
+        $instituteclasses = InstituteClass::where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
+        // dd($findinstitue);
+        if ($instituteclasses->isEmpty()) {
+            return view('admin.class.addclass');
+        } else {
+            return view('admin.class.listclass', compact('instituteclasses'))->with('i', (request()->input('page', 1) - 1) * 100);
+        }
        
     }
 
@@ -111,8 +130,8 @@ class NoticeBoardController extends Controller
         $response = $client->post('https://api.applink.com.bd/sms/send', [
             "json" => [
                 "version" => "1.0",
-                "applicationId" => "APP_003242",
-                "password" => "5538bf24fb2c913ed908b7fa22e54447",
+                "applicationId" => env('EDUB_APP_ID'),
+                "password" => env('EDUB_PASSWORD'),
                 "message" => "$content",
                 "destinationAddresses" => [
                     "tel:88$contact"
@@ -177,8 +196,8 @@ class NoticeBoardController extends Controller
         $response = $client->post('https://api.applink.com.bd/sms/send', [
             "json" => [
                 "version" => "1.0",
-                "applicationId" => "APP_003242",
-                "password" => "5538bf24fb2c913ed908b7fa22e54447",
+                "applicationId" => env('EDUB_APP_ID'),
+                "password" => env('EDUB_PASSWORD'),
                 "message" => "$content",
                 "destinationAddresses" => [
                     "tel:88$contact"
@@ -226,4 +245,69 @@ class NoticeBoardController extends Controller
     //  }
     }
     }
+    public function classStudentNotice(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'notice' => 'required',
+        ]);
+    
+        $content = $request->input('notice');
+    
+        $class_students = StudentProfile::select(
+                'student_profiles.*',
+                'student_school_data.*'
+            )
+            ->join('student_school_data', 'student_profiles.id', '=', 'student_school_data.student_id')
+            ->where('student_school_data.institue_class_id', $request->input('class_id'))
+            ->get();
+    
+        $client = new Client(); // create once
+    
+        $successCount = 0;
+        $failCount = 0;
+    
+        foreach ($class_students as $row) {
+    
+            $operator = $row->operator_id;
+            $contact  = $row->contactNo;
+    
+            if ($operator == 'Banglalink' && !empty($contact)) {
+    
+                try {
+                    $response = $client->post('https://api.applink.com.bd/sms/send', [
+                        "json" => [
+                            "version" => "1.0",
+                            "applicationId" => env('EDUB_APP_ID'),
+                            "password" => env('EDUB_PASSWORD'),
+                            "message" => $content,
+                            "destinationAddresses" => [
+                                "tel:88{$contact}"
+                            ]
+                        ]
+                    ]);
+    
+                    $jsonResponse = json_decode($response->getBody(), true);
+    
+                    if (isset($jsonResponse['statusCode']) && $jsonResponse['statusCode'] == 'S1000') {
+                        $successCount++;
+                    } else {
+                        $failCount++;
+                    }
+    
+                } catch (\Exception $e) {
+                    $failCount++;
+                    \Log::error('SMS Failed for '.$contact.' : '.$e->getMessage());
+                }
+    
+            } // end if
+    
+        } // end foreach
+    
+        return redirect()
+    ->route('classnoticereport')
+    ->with('success', "SMS sent: {$successCount}, Failed: {$failCount}");
+
+    }
+    
 }
