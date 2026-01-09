@@ -20,6 +20,16 @@
         <p>{{ $message }}</p>
     </div>
     @endif
+    @if(session('popup_error'))
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Oops!',
+    text: "{{ session('popup_error') }}",
+    confirmButtonText: 'OK'
+});
+</script>
+@endif
     <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">

@@ -21,6 +21,8 @@
     <!-- <link rel="stylesheet" href="{{asset('admin/css/font-awesome.min.css')}}"> -->
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{asset('admin/images/favicon.ico')}}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     @vite(['resources/js/app.js'])
 </head>

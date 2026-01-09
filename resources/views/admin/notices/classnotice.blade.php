@@ -7,7 +7,7 @@
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">
-        NOTICE BOARD</h4>
+        CLASS NOTICE</h4>
       @if ($errors->any())
       <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with input.<br><br>
@@ -23,6 +23,16 @@
                 <p>{{ $message }}</p>
             </div>
         @endif
+        @if(session('popup_error'))
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: "{{ session('popup_error') }}",
+            confirmButtonText: 'OK'
+        });
+        </script>
+        @endif
       <div>
      
       <form class="forms-sample" action="{{route('classStudentNotice')}}" method="POST" enctype="multipart/form-data">
@@ -30,13 +40,26 @@
        
         <div class="form-group">
           <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10">Dear Students</textarea>
-        
           <input type="hidden" name='class_id' value="{{$data->id}}">
+            <div class="input-group col-xs-12">
+                            <select  name="class_version"  class="custom-select" id="class_version" required>
+                            <option>Select Version</option>
+                            <option value="Bangla" >Bangla </option>
+                            <option value="English" >English </option>
+                            </select>
+                            <select  name="class_shift"  class="custom-select" id="class_shift" required>
+                            <option>Select Shift</option>
+                            <option value="Morning" >Morning </option>
+                            <option value="Day" >Day </option>
+                            </select>
+               </div>
+          </div>
+       
+     <div>
           <button type="submit" class="btn btn-gradient-danger me-2">Send SMS Notice</button>
           </div>
       </form>
 </div>
-
     </div>
   </div>
 </div>

@@ -27,10 +27,8 @@
      
       <form class="forms-sample" action="{{route('sendStudentNotice')}}" method="POST" enctype="multipart/form-data">
         @csrf
-       
         <div class="form-group">
           <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10">Dear {{$data->studentName}}</textarea>
-        
           <input type="hidden" name='student_id' value="{{$data->id}}">
           <button type="submit" class="btn btn-gradient-danger me-2">Send SMS Notice</button>
           </div>
