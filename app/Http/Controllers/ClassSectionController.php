@@ -15,13 +15,15 @@ class ClassSectionController extends Controller
     public function index(Request $request)
     {
         // dd($request->input('id'));
-        $classinfo = InstituteClass::where('institution_id', Auth::user()->Institution->id)->get();
+        // dd($request);
+        $classinfo = InstituteClass::where('id', $request->id)->get();
+      
         $classsections = ClassSection::where('institue_class_id', $request->id)->get();
-        // dd($classsections);
+        // dd($classinfo);
         // $class_id = $request->input('id');
         if ($classsections->isEmpty()) {
             return view('admin.section.addsection',  compact('classinfo', 'classsections'));
-        } else if ($classsections->isNotEmpty()){
+        } else {
             return view('admin.section.listsection', compact('classinfo', 'classsections'))->with('i', (request()->input('page', 1) - 1) * 100);
         }
     }
@@ -55,12 +57,12 @@ class ClassSectionController extends Controller
         if ($findclasses->isEmpty()) {
             $input = $request->all();
             ClassSection::create($input);
-            // return redirect()->route('class_sections.index')->with('success', 'Class Section has been added successfully.');
-            return redirect()->route('class_sections.index', ['institue_class_id' => $request->input('institue_class_id')])->with('success', 'Class Section has been added successfully.');
-        } else if ($findclasses->isnotEmpty()) {
+            return redirect()->route('class_sections.index')->with('success', 'Class Section has been added successfully.');
+            // return redirect()->route('class_sections.index', ['institue_class_id' => $request->input('institue_class_id')])->with('success', 'Class Section has been added successfully.');
+        } else{
             // dd($findclasses);
-            // return redirect()->route('class_sections.index')->with('institue_class_id', 'Class Section already exists!!');
-            return redirect()->route('class_sections.index', ['institue_class_id' => $request->input('institue_class_id')])->with('error', 'Class Section already exists!!');
+            return redirect()->route('class_sections.index')->with('institue_class_id', 'Class Section already exists!!');
+            // return redirect()->route('class_sections.index', ['institue_class_id' => $request->input('institue_class_id')])->with('error', 'Class Section already exists!!');
 
         }
     }
