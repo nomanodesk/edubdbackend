@@ -24,8 +24,16 @@
             </div>
         @endif
       <div>
-     
-      <form class="forms-sample" action="{{route('sendGenNotice')}}" method="POST" enctype="multipart/form-data">
+      <div id="smsProgressBox" style="display:none;" class="mb-3">
+    <label>Sending SMS, please wait...</label>
+    <div style="width:100%; background:#ddd; border-radius:5px; overflow:hidden;">
+        <div id="smsProgressBar"
+             style="width:0%; height:20px; background:#28a745; transition:width 0.3s;">
+        </div>
+    </div>
+</div>
+
+      <form id="smsForm" class="forms-sample" action="{{route('sendGenNotice')}}" method="POST" enctype="multipart/form-data">
         @csrf
        
         <div class="form-group">
@@ -53,3 +61,47 @@
   </div>
 </div>
 @endsection
+<script>
+document.getElementById('smsForm').addEventListener('submit', function(e){
+    e.preventDefault(); // stop normal submit
+
+    let form = this;
+    let progressBox = document.getElementById('smsProgressBox');
+    let bar = document.getElementById('smsProgressBar');
+    let btn = document.getElementById('sendBtn');
+
+    progressBox.style.display = 'block';
+    btn.disabled = true;
+
+    // fake progress animation
+    let width = 0;
+    let progressTimer = setInterval(() => {
+        if (width < 90) {
+            width += 5;
+            bar.style.width = width + '%';
+        }
+    }, 300);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(res => res.text())
+    .then(() => {
+        clearInterval(progressTimer);
+        bar.style.width = '100%';
+
+        setTimeout(() => {
+            window.location.href = "{{ route('institute_classes.index') }}";
+        }, 800);
+    })
+    .catch(() => {
+        clearInterval(progressTimer);
+        alert('SMS sending failed!');
+        btn.disabled = false;
+    });
+});
+</script>

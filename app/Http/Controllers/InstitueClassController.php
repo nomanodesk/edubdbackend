@@ -74,6 +74,12 @@ class InstitueClassController extends Controller
         ->where('institute_classes.id', $request->id)
         ->get();
         // dd($class_students);
-        return view('admin.class.classStudents', compact('class_students'))->with('i', (request()->input('page', 1) - 1) * 100);
+        
+        if ($class_students->isEmpty()) {
+            return redirect()->back()
+            ->with('popup_error', 'No students found in this class')
+            ->withInput();}else{
+                return view('admin.class.classStudents', compact('class_students'))->with('i', (request()->input('page', 1) - 1) * 100);
+        }  
     }
 }
