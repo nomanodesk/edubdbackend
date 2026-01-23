@@ -25,7 +25,7 @@
 
         <div class="form-group">
           <label for="exampleInputPassword4">Contact No.*</label>
-          <input type="number" class="form-control" id="exampleInputPassword4" name='contactNo' required>
+          <input type="number" class="form-control" id="exampleInputPassword4" name='contactNo' placeholder="01xxxxxxxxx" required>
         </div>
         <!-- <label for="exampleInputPassword4">operator*</label>
         <div class="col-md-10">

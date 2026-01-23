@@ -29,7 +29,7 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{{route('student_profiles.index')}}">
+      <a class="nav-link" href="{{route('students.index')}}">
         <span class="menu-title">Student Manager</span>
         <i class="mdi mdi-account-key menu-icon"></i>
       </a>

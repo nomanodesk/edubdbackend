@@ -14,18 +14,63 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\StudentsImport;
+use App\Exports\StudentsTemplateExport;
 
 class StudentProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    // public function index()
+    // {
+    //     $students = StudentProfile::orderBy('id', 'desc')->where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
+    //     return view('admin.student.liststudent', compact('students'))
+    //         ->with('i', (request()->input('page', 1) - 1) * 100);
+    // }
+    public function index(Request $request)
     {
-        $students = StudentProfile::orderBy('id', 'desc')->where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
-        return view('admin.student.liststudent', compact('students'))
-            ->with('i', (request()->input('page', 1) - 1) * 100);
+        $classes = InstituteClass::where('institution_id', Auth::user()->Institution->id)->get();
+    // dd($classes);
+        $students = StudentProfile::query()
+            ->select(
+                'student_profiles.*',
+                'class_sections.sectionName',
+                'class_sections.class_shift',
+                'institute_classes.className'
+            )
+            ->join('student_school_data', 'student_school_data.student_id', '=', 'student_profiles.id')
+            ->join('class_sections', 'class_sections.id', '=', 'student_school_data.class_section_id')
+            ->join('institute_classes', 'institute_classes.id', '=', 'student_school_data.institue_class_id')
+    
+            ->when($request->institue_class_id, function ($q) use ($request) {
+                $q->where('student_school_data.institue_class_id', $request->institue_class_id);
+            })
+            ->when($request->class_section_id, function ($q) use ($request) {
+                $q->where('student_school_data.class_section_id', $request->class_section_id);
+            })
+            ->when($request->class_shift, function ($q) use ($request) {
+                $q->where('class_sections.class_shift', $request->class_shift);
+            })
+    
+            ->orderBy('student_profiles.id', 'desc')
+            ->paginate(10)               // ✅ pagination
+            ->withQueryString();         // ✅ keep filters during pagination
+    
+        return view('admin.student.index', compact('classes', 'students'));
     }
+    
+    public function getSections($classId)
+{
+    $sections = ClassSection::where('institue_class_id', $classId)
+        ->select('id', 'sectionName', 'class_shift')
+        ->orderBy('sectionName')
+        ->get();
+
+    return response()->json($sections);
+}
+
     public function classStudents(Request $request)
     {
         $students = StudentProfile::orderBy('id', 'desc')->where('institution_id', Auth::user()->Institution->id)->simplepaginate(100);
@@ -58,22 +103,8 @@ class StudentProfileController extends Controller
         ]);
         if ($validator->fails()) {
             return back()->withErrors(["error" => "Please Enter a valid Robi/Airtel/Banglalink number"])->withInput();
-        }
-        // $classes = InstituteClass::where('institution_id', Auth::user()->id)->get();
-        // dd($classes);
-        // $contact = $request->input('contactNo');
-        // $firstThreeDigits = substr($contact, 0, 3);
-        // $operator = '';
-        // if ($firstThreeDigits == '018') {
-        //     $operator = "Robi";
-        // } else if ($firstThreeDigits == '019') {
-        //     $operator = "Banglalink";
-        // }
-        // dd($operator);
+        }  
         $input = $request->all();
-        // dd($input);
-
-
         if ($image = $request->file('studentImage')) {
             $path = public_path('studentImages/');
             !is_dir($path) &&
@@ -88,37 +119,15 @@ class StudentProfileController extends Controller
             unset($input['image']);
         }
         Session::put('key', $input);
-        $insertedData =  session('key'); // Store data with a specific key
-       
-        // dd($insertedData);
-        // StudentProfile::create($input);
-        // $data = new StudentProfile;
-        // $data->institution_id = $request->input('institution_id');
-        // $data->studentName = $request->input('studentName');
-        // $data->address = $request->input('address');
-        // $data->contactNo = $request->input('contactNo');
-        // $data->operator_id = $operator;
-        // if ($image != NULL) {
-        //     $data->studentImage = $profileImage;
-        // }
-
-        // $data->save();
-
-        // return redirect()->route('student_profiles.index')->with('success', 'Student Data added successfully.');
-        // $classes = InstituteClass::orderBy('id', 'desc')->where('institution_id',Auth::user()->Institution->id)->get();
-        // $classes=InstituteClass::all();
+        $insertedData =  session('key'); 
         $classes = InstituteClass::where('institution_id', Auth::user()->id)
         ->join('class_sections','institute_classes.id', '=', 'class_sections.institue_class_id')
         ->get();
        
-        // dd($classes);
-        // $users = \App\Models\Category::with('users')->get();
-        
         return view('admin.student.addstudentclass', compact('insertedData','classes'));
     }
     public function addData(Request $request){
-        // dd($request);
-        // StudentProfile::create($input);
+      
         $contact = $request->input('contactNo');
         $firstThreeDigits = substr($contact, 0, 3);
         $operator = '';
@@ -141,13 +150,43 @@ class StudentProfileController extends Controller
         $data2->institue_class_id = $request->input('institue_class_id');
         $data2->student_id = $lastId;
         $data2->save();
-        return redirect()->route('student_profiles.index')->with('success', 'Application has been created successfully.');
+        return redirect()->route('student_profiles.index')->with('success', 'Student has been created successfully.');
+    
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(StudentProfile $studentProfile)
+    public function importExcel(Request $request)
+{
+    // dd($request->all());
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls',
+        'class_section_id' => 'required',
+        'institue_class_id' => 'required',
+    ]);
+
+    try {
+        Excel::import(
+            new StudentsImport(
+                $request->class_section_id,
+                $request->institue_class_id
+            ),
+            $request->file('file')
+        );
+        
+        return back()->with('success', 'Students uploaded successfully');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        return back()->with('excelErrors', $e->failures());
+    }
+}
+
+public function downloadStudentTemplate()
+{
+    return Excel::download(new StudentsTemplateExport, 'student_import_template.xlsx');
+}
+
+public function show(StudentProfile $studentProfile)
     {
         //
     }

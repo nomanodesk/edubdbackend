@@ -3,6 +3,8 @@
 @section('content')
 @foreach ($classinfo as $data)
 @endforeach
+@foreach ($classsections as $applinkapp)
+@endforeach
 <div class="container mt-4">
     <div class="row">
         <!-- <div class="col-lg-12 margin-tb">
@@ -29,11 +31,14 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Section List For Class - {{$data->className}} </h4>
-                        <form action="{{route('addsection')}}" method="POST">
-                    @csrf
-                    <input type="hidden" name="institue_class_id" value="{{$data->id}}">
-                    <button class="btn btn-gradient-primary btn-sm">Add Section</button>
-                </form>
+                        <div class="table-responsive">
+                        <table class="table table-striped table-bordered ">
+                            <tr><td>
+                  <a class="btn btn-gradient-primary btn-sm" href="{{ route('student_profiles.create') }}"> Add Single Student</a></td>
+                   </tr>
+                   
+                    </table>
+                    </div>
                         <div class="table-responsive">
                         <table class="table table-striped table-bordered" id="dataTables-example1">
                                 <thead>
@@ -43,29 +48,23 @@
                                         <th> Shift </th>
                                         <th> Version</th>
                                         <th> Action </th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($classsections as $applinkapp)
                                     <tr>
-                                    <td>{{ ++$i }}</td>
+                                        <td>{{ ++$i }}</td>
                                         <td>{{ $applinkapp->sectionName }}</td>
                                         <td>{{ $applinkapp->class_shift }}</td>
                                         <td>{{ $applinkapp->class_version }}</td>
-
-
                                         <td>
                                             <div class="template-demo">
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('institute_classes.edit',$applinkapp->id)}}">Edit </a>
-                                                    <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_school_data.index',$applinkapp->id)}}">View Students </a>
-
-
+                                                    <!-- <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_school_data.index',$applinkapp->id)}}">View Students </a> -->
                                                 </div>
-
+                                            </div>
                                         </td>
-
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -75,9 +74,6 @@
                 </div>
             </div>
         </div>
-
-
-
         @endsection
 
         <script>

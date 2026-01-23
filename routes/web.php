@@ -36,6 +36,8 @@ Route::resource('institute_classes', InstitueClassController::class);
 Route::get('/class-students/{id}', [InstitueClassController::class, 'classStudents'])->name('getClassStudents');
 Route::resource('class_sections', ClassSectionController::class);
 Route::resource('student_profiles', StudentProfileController::class);
+Route::get('/students', [StudentProfileController::class, 'index'])->name('students.index');
+
 Route::resource('notice_boards', NoticeBoardController::class);
 Route::post('/addstudentclass', [StudentProfileController::class, 'addData'])->name('addstudentclass');
 Route::resource('student_school_data', StudentSchoolDataController::class);
@@ -47,3 +49,8 @@ Route::post('/sendStudentNotice', [NoticeBoardController::class, 'sendStudentNot
 Route::get('/class-notice/{id}', [NoticeBoardController::class, 'classnoticepage'])->name('classnoticepage');
 Route::post('/classStudentNotice', [NoticeBoardController::class, 'classStudentNotice'])->name('classStudentNotice');
 Route::get('/classNoticeReport', [NoticeBoardController::class, 'classnoticereport'])->name('classnoticereport');
+Route::post('/students/import', [StudentProfileController::class, 'importExcel'])->name('students.import');
+Route::get('/students/template', [StudentProfileController::class, 'downloadStudentTemplate']) ->name('students.template');
+Route::get('/get-sections/{classId}', [StudentProfileController::class, 'getSections'])->name('get.sections');
+
+
