@@ -31,14 +31,14 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Section List For Class - {{$data->className}} </h4>
-                        <div class="table-responsive">
+                        <!-- <div class="table-responsive">
                         <table class="table table-striped table-bordered ">
                             <tr><td>
                   <a class="btn btn-gradient-primary btn-sm" href="{{ route('student_profiles.create') }}"> Add Single Student</a></td>
                    </tr>
                    
                     </table>
-                    </div>
+                    </div> -->
                         <div class="table-responsive">
                         <table class="table table-striped table-bordered" id="dataTables-example1">
                                 <thead>

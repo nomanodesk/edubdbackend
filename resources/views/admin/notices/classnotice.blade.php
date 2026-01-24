@@ -48,7 +48,7 @@
         @csrf
        
         <div class="form-group">
-          <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10">Dear Students</textarea>
+          <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10"></textarea>
           <input type="hidden" name='class_id' value="{{$data->id}}">
             <div class="input-group col-xs-12">
                             <select  name="class_version"  class="custom-select" id="class_version" required>

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstituteClass;
 use App\Models\Institution;
+use App\Models\StudentProfile;
 use Auth;
 use Illuminate\Http\Request;
 use Image;
@@ -21,7 +23,12 @@ class InstitutionController extends Controller
             return view('admin.addinstitue');
         }
          else {
-            return view('admin.home', compact('institute'));
+            $total_classes = InstituteClass::where('institution_id', Auth::user()->Institution->id)->count();
+            $total_students = StudentProfile::where('institution_id', Auth::user()->Institution->id)->count();
+            // dd($total_classes);
+// SQL executed: SELECT COUNT(*) FROM users WHERE status = 'active'
+
+            return view('admin.home', compact('institute','total_classes','total_students'));
         }
        
      }

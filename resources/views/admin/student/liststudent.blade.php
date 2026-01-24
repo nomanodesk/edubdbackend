@@ -93,7 +93,7 @@ Swal.fire({
                                     @endif
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('student_profiles.edit',$applinkapp->id)}}">Profile Data</a>
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('students.edit',$applinkapp->id)}}">Profile Data</a>
                                             <a class="btn btn-gradient-danger btn-rounded btn-fw btn-sm" href="{{route('student_school_data.edit',$applinkapp->id)}}">Class Data</a>
                                             <a class="btn btn-gradient-info btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->id)}}">Send Notice</a>
                                         </div>

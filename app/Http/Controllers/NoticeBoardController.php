@@ -98,76 +98,69 @@ class NoticeBoardController extends Controller
         //
     }
     public function sendGenNotice(Request $request)
-    {
-        // dd($request->all());
-        $request->validate([
-            'description' => 'required',
-        ]);
-        $content = $request->input('description');
-       
-        $students = StudentProfile::where('institution_id', Auth::user()->Institution->id)->get();
-        foreach ($students as $row) {
-            $operator = $row['operator_id'];
-            $contact = $row['contactNo'];
-        $client = new Client();
-        $successCount = 0;
-        $failCount = 0;
-       
-        if ($operator == 'Banglalink' && !empty($contact)) {
-    
-            try {
-                $response = $client->post('https://api.applink.com.bd/sms/send', [
-                    "json" => [
-                        "version" => "1.0",
-                        "applicationId" => env('EDUB_APP_ID'),
-                        "password" => env('EDUB_PASSWORD'),
-                        "message" => $content,
-                        "destinationAddresses" => [
-                            "tel:88{$contact}"
-                        ]
+{
+    $request->validate([
+        'description' => 'required',
+    ]);
+
+    $content = $request->input('description');
+    $institutionId = Auth::user()->Institution->id;
+
+    $students = StudentProfile::where('institution_id', $institutionId)->get();
+
+    if ($students->isEmpty()) {
+        return redirect()->back()
+            ->with('popup_error', 'No students found')
+            ->withInput();
+    }
+
+    $client = new Client();
+    $successCount = 0;
+    $failCount = 0;
+
+    foreach ($students as $row) {
+
+        $operator = $row->operator_id;
+        $contact  = $row->contactNo;
+
+        // send only Banglalink numbers
+        if ($operator !== 'Banglalink' || empty($contact)) {
+            continue;
+        }
+
+        try {
+            $response = $client->post('https://api.applink.com.bd/sms/send', [
+                'json' => [
+                    'version' => '1.0',
+                    'applicationId' => env('EDUB_APP_ID'),
+                    'password' => env('EDUB_PASSWORD'),
+                    'message' => $content,
+                    'destinationAddresses' => [
+                        "tel:88{$contact}"
                     ]
-                ]);
+                ]
+            ]);
 
-                $jsonResponse = json_decode($response->getBody(), true);
+            $jsonResponse = json_decode($response->getBody(), true);
 
-                if (isset($jsonResponse['statusCode']) && $jsonResponse['statusCode'] == 'S1000') {
-                    $successCount++;
-                } else {
-                    $failCount++;
-                }
-
-            } catch (\Exception $e) {
+            if (($jsonResponse['statusCode'] ?? null) === 'S1000') {
+                $successCount++;
+            } else {
                 $failCount++;
-                \Log::error('SMS Failed for '.$contact.' : '.$e->getMessage());
             }
 
+        } catch (\Exception $e) {
+            $failCount++;
+            \Log::error('SMS Failed for '.$contact.' : '.$e->getMessage());
         }
-        return redirect()->route('notice_boards.index')->with('success', "SMS sent: {$successCount}, Failed: {$failCount}");
     }
-    // elseif($operator == 'Robi'){
-    //     $response = $client->post('https://developer.bdapps.com/sms/send', [
-    //         "json" => [
-    //             "version" => "1.0",
-    //             "applicationId" => "$appID",
-    //             "password" => "$appPass",
-    //             "message" => "$content",
-    //             "destinationAddresses" => [
-    //                 "tel:all"
-    //             ]
 
-    //         ]
-    //     ]);
-    //     $jsonResponse = json_decode($response->getBody(), true);
-    //     // print_r($jsonResponse);
-    //     // if ($jsonResponse['statusCode'] == 'S1000') {
-    //     //     // print_r($jsonResponse);
-    //     //     return redirect()->route('apps.index')->with('success', 'SMS Sent Successfully || '.$jsonResponse['statusDetail'].' || '.$jsonResponse['statusCode'])->withInput();
-    //     // }
-    //     // else if ($jsonResponse['statusCode'] == 'E1311') {
-    //     //     return back()->with('error', 'ERROR SENDING SMS!!! PLEASE CONTACT BDAPPS SUPPORT WITH ERROR CODE : ' . $jsonResponse['statusCode'])->withInput();
-    //     // }
-    //  }
-    }
+    // ✅ redirect AFTER processing ALL students
+    return redirect()
+        ->route('notice_boards.index')
+        ->with('success', "SMS sent successfully. Success: {$successCount}, Failed: {$failCount}");
+}
+
     
     public function sendStudentNotice(Request $request)
     {
@@ -181,6 +174,7 @@ class NoticeBoardController extends Controller
         foreach ($student as $row) {
             $operator = $row['operator_id'];
             $contact = $row['contactNo'];
+            $studentName = $row['studentName'];
         $client = new Client();
         if($operator == 'Banglalink'){
         $response = $client->post('https://api.applink.com.bd/sms/send', [
@@ -188,7 +182,7 @@ class NoticeBoardController extends Controller
                 "version" => "1.0",
                 "applicationId" => env('EDUB_APP_ID'),
                 "password" => env('EDUB_PASSWORD'),
-                "message" => "$content",
+                "message" => "Dear $studentName $content",
                 "destinationAddresses" => [
                     "tel:88$contact"
                 ]
@@ -285,7 +279,6 @@ class NoticeBoardController extends Controller
         ->with('popup_error', 'No students found')
         ->withInput();}else{
         $client = new Client(); // create once
-        
         $successCount = 0;
         $failCount = 0;
     
@@ -293,6 +286,7 @@ class NoticeBoardController extends Controller
     
             $operator = $row->operator_id;
             $contact  = $row->contactNo;
+            $studentName = $row->studentName;
     
             if ($operator == 'Banglalink' && !empty($contact)) {
     
@@ -302,7 +296,7 @@ class NoticeBoardController extends Controller
                             "version" => "1.0",
                             "applicationId" => env('EDUB_APP_ID'),
                             "password" => env('EDUB_PASSWORD'),
-                            "message" => $content,
+                            "message" => "Dear $studentName $content",
                             "destinationAddresses" => [
                                 "tel:88{$contact}"
                             ]

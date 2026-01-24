@@ -73,7 +73,7 @@ Swal.fire({
              
             <div class="col-md-12">
               <button class="btn btn-gradient-dark btn-sm">Upload Students Data</button>
-                    <a href="{{ route('students.template') }}" class="btn btn-gradient-danger btn-sm">Download Excel Template</a>
+                    <a href="{{ route('students.template') }}" class="btn btn-gradient-success btn-sm">Download Excel Template</a>
                     <a class="btn btn-gradient-primary btn-sm" href="{{ route('student_profiles.create') }}"> Add New Student</a></td>
                 <!-- Button -->
              </div>
@@ -82,19 +82,7 @@ Swal.fire({
         </table>
     </div>
 
-@if(session('success'))
-<div class="alert alert-success">{{ session('success') }}</div>
-@endif
 
-@if(session('failures'))
-<div class="alert alert-danger">
-    <ul>
-        @foreach(session('failures') as $f)
-        <li>Row {{ $f->row() }}: {{ implode(', ', $f->errors()) }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
    <div class="card-body">
     <h4 class="card-title">Students List</h4>
         <form method="GET" action="{{ route('students.index') }}">
@@ -137,7 +125,7 @@ Swal.fire({
 
                 <!-- Button -->
                 <div class="col-md-3">
-                    <button class="btn btn-gradient-success btn-sm">
+                    <button class="btn btn-gradient-warning btn-sm">
                         Search Students
                     </button>
                 </div>
@@ -162,6 +150,7 @@ Swal.fire({
                         <th>Class</th>
                         <th>Section</th>
                         <th>Shift</th>
+                        <th>Menu</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -172,6 +161,12 @@ Swal.fire({
                             <td>{{ $student->className }}</td>
                             <td>{{ $student->sectionName }}</td>
                             <td>{{ $student->class_shift }}</td>
+                            <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                            <a class="btn btn-gradient-danger btn-rounded btn-fw btn-sm" href="{{route('noticepage',$student->id)}}">Send Notice</a>
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('students.edit',$student->id)}}">Edit Data</a>
+                                        </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

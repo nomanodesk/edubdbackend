@@ -194,18 +194,72 @@ public function show(StudentProfile $studentProfile)
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(StudentProfile $studentProfile)
+    public function edit($id)
     {
-        //
+        $student = StudentProfile::with('schoolData')->findOrFail($id);
+    
+        $classes = InstituteClass::where(
+            'institution_id',
+            Auth::user()->Institution->id
+        )->get();
+    
+        $sections = ClassSection::where(
+            'institue_class_id',
+            $student->schoolData->institue_class_id
+        )->get();
+    
+        return view(
+            'admin.student.edit',
+            compact('student', 'classes', 'sections')
+        );
     }
-
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, StudentProfile $studentProfile)
-    {
-        //
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'studentName' => 'required',
+        'address' => 'required',
+        'contactNo' => 'required|digits:11|unique:student_profiles,contactNo,' . $id,
+        'institue_class_id' => 'required',
+        'class_section_id' => 'required',
+    ]);
+
+    $student = StudentProfile::findOrFail($id);
+
+    // detect operator
+    $contact = $request->contactNo;
+    $operator = '';
+    if (substr($contact, 0, 3) == '018') {
+        $operator = 'Robi';
+    } elseif (substr($contact, 0, 3) == '019') {
+        $operator = 'Banglalink';
     }
+
+    // update student profile
+    $student->update([
+        'studentName' => $request->studentName,
+        'address' => $request->address,
+        'contactNo' => $contact,
+        'operator_id' => $operator,
+    ]);
+
+    // update school data
+    StudentSchoolData::updateOrCreate(
+        ['student_id' => $student->id],
+        [
+            'institue_class_id' => $request->institue_class_id,
+            'class_section_id' => $request->class_section_id,
+        ]
+    );
+
+    return redirect()
+        ->route('student_profiles.index')
+        ->with('success', 'Student updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.

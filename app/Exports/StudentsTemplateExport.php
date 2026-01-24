@@ -11,7 +11,7 @@ class StudentsTemplateExport implements FromArray
         return [
             ['studentname', 'address', 'contactno', 'rollno'],
             ['Noman', 'Uttara, Dhaka', '01999999999','1'],
-            ['Munni', 'Modhubag', '01999999998','2'],
+            ['Mugdho', 'Bogra', '01999999998','2'],
         ];
     }
 }

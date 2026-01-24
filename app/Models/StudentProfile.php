@@ -21,4 +21,9 @@ class StudentProfile extends Model
     {
         return $this->hasOne(StudentSchoolData::class);
     }
+    public function schoolData()
+{
+    return $this->hasOne(StudentSchoolData::class, 'student_id');
+}
+
 }

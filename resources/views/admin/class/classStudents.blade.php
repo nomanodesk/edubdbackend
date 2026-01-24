@@ -48,6 +48,7 @@
                                     <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                             <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('noticepage',$applinkapp->student_id)}}">Send Notice</a>
+                                            <a class="btn btn-gradient-dark btn-rounded btn-fw btn-sm" href="{{route('students.edit',$applinkapp->student_id)}}">Edit Data</a>
                                         </div>
                                     </td>
                                 </tr>

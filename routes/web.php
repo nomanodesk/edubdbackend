@@ -49,8 +49,12 @@ Route::post('/sendStudentNotice', [NoticeBoardController::class, 'sendStudentNot
 Route::get('/class-notice/{id}', [NoticeBoardController::class, 'classnoticepage'])->name('classnoticepage');
 Route::post('/classStudentNotice', [NoticeBoardController::class, 'classStudentNotice'])->name('classStudentNotice');
 Route::get('/classNoticeReport', [NoticeBoardController::class, 'classnoticereport'])->name('classnoticereport');
+
 Route::post('/students/import', [StudentProfileController::class, 'importExcel'])->name('students.import');
 Route::get('/students/template', [StudentProfileController::class, 'downloadStudentTemplate']) ->name('students.template');
 Route::get('/get-sections/{classId}', [StudentProfileController::class, 'getSections'])->name('get.sections');
+Route::get('/students/{id}/edit', [StudentProfileController::class, 'edit'])->name('students.edit');
+Route::put('/students/{id}', [StudentProfileController::class, 'update'])->name('students.update');
+
 
 
