@@ -8,6 +8,8 @@ use App\Models\StudentProfile;
 use Auth;
 use Illuminate\Http\Request;
 use Image;
+use App\Models\SmsHistory;
+use Carbon\Carbon;
 
 class InstitutionController extends Controller
 {
@@ -27,10 +29,13 @@ class InstitutionController extends Controller
          else {
             $total_classes = InstituteClass::where('institution_id', Auth::user()->Institution->id)->count();
             $total_students = StudentProfile::where('institution_id', Auth::user()->Institution->id)->count();
+            $smsCountThisMonth = SmsHistory::whereMonth('created_at', Carbon::now()->month)
+                  ->where('institution_id', Auth::user()->Institution->id)
+                  ->count();
             // dd($total_classes);
 // SQL executed: SELECT COUNT(*) FROM users WHERE status = 'active'
 
-            return view('admin.home', compact('institute','total_classes','total_students'));
+            return view('admin.home', compact('institute','total_classes','total_students','smsCountThisMonth'));
         }
        
      }

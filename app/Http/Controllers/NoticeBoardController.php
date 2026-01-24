@@ -173,7 +173,7 @@ public function sendGenNotice(Request $request)
     )->get();
 
     if ($students->isEmpty()) {
-        return back()->with('popup_error', 'No students found');
+        return back()->with('error', 'No students found');
     }
 
     $key = uniqid();
@@ -181,6 +181,7 @@ public function sendGenNotice(Request $request)
     Cache::put("sms_progress_{$key}_total", $students->count());
     Cache::put("sms_progress_{$key}_sent", 0);
     Cache::put("sms_progress_{$key}_failed", 0);
+    Cache::put("sms_progress_{$key}_unregistered", 0);
     Cache::put("sms_progress_{$key}_done", false);
 
     foreach ($students as $student) {
@@ -195,9 +196,11 @@ public function smsProgressStatus($key)
     return response()->json([
         'sent' => Cache::get("sms_progress_{$key}_sent", 0),
         'failed' => Cache::get("sms_progress_{$key}_failed", 0),
+        'unregistered' => Cache::get("sms_progress_{$key}_unregistered", 0),
         'total' => Cache::get("sms_progress_{$key}_total", 0),
         'done' => Cache::get("sms_progress_{$key}_sent", 0)
                 + Cache::get("sms_progress_{$key}_failed", 0)
+                + Cache::get("sms_progress_{$key}_unregistered", 0)
                 >= Cache::get("sms_progress_{$key}_total", 0),
     ]);
 }

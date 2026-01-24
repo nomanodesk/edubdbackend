@@ -54,7 +54,17 @@ class SendSmsJob implements ShouldQueue
                 'response' => $response->getBody()
             ]);
             Cache::increment("sms_progress_{$this->key}_sent");
-        }else{
+        }elseif(($json['statusCode'] ?? null) === 'E1365'){
+            SmsHistory::create([
+                'institution_id' => $this->student->institution_id,
+                'phone' => $this->student->contactNo,
+                'operator' => $this->student->operator_id,
+                'message' => $this->message,
+                'status' => 'unregistered',
+                'response' => $response->getBody()
+            ]);
+            Cache::increment("sms_progress_{$this->key}_unregistered");
+        } else{
             SmsHistory::create([
                 'institution_id' => $this->student->institution_id,
                 'phone' => $this->student->contactNo,

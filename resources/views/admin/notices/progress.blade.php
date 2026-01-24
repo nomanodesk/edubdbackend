@@ -14,7 +14,7 @@ let timer = setInterval(() => {
     fetch(`/notice-progress-status/${key}`)
         .then(res => res.json())
         .then(data => {
-            let percent = ((data.sent + data.failed) / data.total) * 100;
+            let percent = ((data.sent + data.failed + data.unregistered) / data.total) * 100;
             document.getElementById('bar').style.width = percent + '%';
 
             if (data.done) {
@@ -22,7 +22,7 @@ let timer = setInterval(() => {
                 Swal.fire({
                     icon: 'success',
                     title: 'SMS Completed',
-                    text: `Sent: ${data.sent}, Failed: ${data.failed}`
+                    text: `Sent: ${data.sent}, Failed: ${data.failed}, Unregistered: ${data.unregistered}`
                 }).then(() => {
                     window.location.href = "{{ route('notice_boards.index') }}";
                 });
