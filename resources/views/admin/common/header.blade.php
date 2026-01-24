@@ -13,7 +13,11 @@
           
           <ul class="navbar-nav navbar-nav-right">
           <div class="nav-profile-text">
-                  <p class="mb-1 text-black">Dashboard For:  {{Auth::user()->Institution->instituteName}}</p>
+                  <p class="mb-1 text-black">Dashboard For:  
+                  @auth  
+                  {{Auth::user()->Institution->instituteName}}
+                  @endauth
+                </p>
                 </div>
             <li class="nav-item d-none d-lg-block full-screen-link">
               <a class="nav-link">

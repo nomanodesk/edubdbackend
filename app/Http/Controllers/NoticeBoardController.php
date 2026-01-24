@@ -9,6 +9,9 @@ use App\Models\StudentProfile;
 use App\Models\StudentSchoolData;
 use Auth;
 use GuzzleHttp\Client;
+use App\Jobs\SendSmsJob;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class NoticeBoardController extends Controller
 {
@@ -97,71 +100,109 @@ class NoticeBoardController extends Controller
     {
         //
     }
-    public function sendGenNotice(Request $request)
+//     public function sendGenNotice(Request $request)
+// {
+//     $request->validate([
+//         'description' => 'required',
+//     ]);
+
+//     $content = $request->input('description');
+//     $institutionId = Auth::user()->Institution->id;
+
+//     $students = StudentProfile::where('institution_id', $institutionId)->get();
+
+//     if ($students->isEmpty()) {
+//         return redirect()->back()
+//             ->with('popup_error', 'No students found')
+//             ->withInput();
+//     }
+
+//     $client = new Client();
+//     $successCount = 0;
+//     $failCount = 0;
+
+//     foreach ($students as $row) {
+
+//         $operator = $row->operator_id;
+//         $contact  = $row->contactNo;
+
+//         // send only Banglalink numbers
+//         if ($operator !== 'Banglalink' || empty($contact)) {
+//             continue;
+//         }
+
+//         try {
+//             $response = $client->post('https://api.applink.com.bd/sms/send', [
+//                 'json' => [
+//                     'version' => '1.0',
+//                     'applicationId' => env('EDUB_APP_ID'),
+//                     'password' => env('EDUB_PASSWORD'),
+//                     'message' => $content,
+//                     'destinationAddresses' => [
+//                         "tel:88{$contact}"
+//                     ]
+//                 ]
+//             ]);
+
+//             $jsonResponse = json_decode($response->getBody(), true);
+
+//             if (($jsonResponse['statusCode'] ?? null) === 'S1000') {
+//                 $successCount++;
+//             } else {
+//                 $failCount++;
+//             }
+
+//         } catch (\Exception $e) {
+//             $failCount++;
+//             \Log::error('SMS Failed for '.$contact.' : '.$e->getMessage());
+//         }
+//     }
+
+//     // ✅ redirect AFTER processing ALL students
+//     return redirect()
+//         ->route('notice_boards.index')
+//         ->with('success', "SMS sent successfully. Success: {$successCount}, Failed: {$failCount}");
+// }
+
+public function sendGenNotice(Request $request)
 {
-    $request->validate([
-        'description' => 'required',
-    ]);
+    $request->validate(['description' => 'required']);
 
-    $content = $request->input('description');
-    $institutionId = Auth::user()->Institution->id;
-
-    $students = StudentProfile::where('institution_id', $institutionId)->get();
+    $students = StudentProfile::where(
+        'institution_id', Auth::user()->Institution->id
+    )->get();
 
     if ($students->isEmpty()) {
-        return redirect()->back()
-            ->with('popup_error', 'No students found')
-            ->withInput();
+        return back()->with('popup_error', 'No students found');
     }
 
-    $client = new Client();
-    $successCount = 0;
-    $failCount = 0;
+    $key = uniqid();
 
-    foreach ($students as $row) {
+    Cache::put("sms_progress_{$key}_total", $students->count());
+    Cache::put("sms_progress_{$key}_sent", 0);
+    Cache::put("sms_progress_{$key}_failed", 0);
+    Cache::put("sms_progress_{$key}_done", false);
 
-        $operator = $row->operator_id;
-        $contact  = $row->contactNo;
-
-        // send only Banglalink numbers
-        if ($operator !== 'Banglalink' || empty($contact)) {
-            continue;
-        }
-
-        try {
-            $response = $client->post('https://api.applink.com.bd/sms/send', [
-                'json' => [
-                    'version' => '1.0',
-                    'applicationId' => env('EDUB_APP_ID'),
-                    'password' => env('EDUB_PASSWORD'),
-                    'message' => $content,
-                    'destinationAddresses' => [
-                        "tel:88{$contact}"
-                    ]
-                ]
-            ]);
-
-            $jsonResponse = json_decode($response->getBody(), true);
-
-            if (($jsonResponse['statusCode'] ?? null) === 'S1000') {
-                $successCount++;
-            } else {
-                $failCount++;
-            }
-
-        } catch (\Exception $e) {
-            $failCount++;
-            \Log::error('SMS Failed for '.$contact.' : '.$e->getMessage());
-        }
+    foreach ($students as $student) {
+        SendSmsJob::dispatch($student, $request->description, $key);
     }
 
-    // ✅ redirect AFTER processing ALL students
-    return redirect()
-        ->route('notice_boards.index')
-        ->with('success', "SMS sent successfully. Success: {$successCount}, Failed: {$failCount}");
+    return view('admin.notices.progress', compact('key'));
 }
 
-    
+public function smsProgressStatus($key)
+{
+    return response()->json([
+        'sent' => Cache::get("sms_progress_{$key}_sent", 0),
+        'failed' => Cache::get("sms_progress_{$key}_failed", 0),
+        'total' => Cache::get("sms_progress_{$key}_total", 0),
+        'done' => Cache::get("sms_progress_{$key}_sent", 0)
+                + Cache::get("sms_progress_{$key}_failed", 0)
+                >= Cache::get("sms_progress_{$key}_total", 0),
+    ]);
+}
+
+
     public function sendStudentNotice(Request $request)
     {
         // dd($request->all());

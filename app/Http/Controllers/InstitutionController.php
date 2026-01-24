@@ -17,7 +17,9 @@ class InstitutionController extends Controller
 
      public function dashboard()
      {  
-        $institute = Institution::where('user_id', Auth::user()->id)->get();
+        $userId = Auth::id(); // returns null if not logged in
+
+        $institute = Institution::where('user_id', $userId)->get();
         // dd($findinstitue);
         if($institute->isEmpty()){
             return view('admin.addinstitue');
