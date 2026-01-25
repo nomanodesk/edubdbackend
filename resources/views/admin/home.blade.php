@@ -35,12 +35,12 @@
                 </div>
               </div>
               <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card bg-gradient-secondary card-img-holder text-white">
                   <div class="card-body">
                     <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Total SMS <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
                     <h2 class="mb-5">{{$smsCountThisMonth}}</h2>
-                    <canvas id="smsOperatorPieChart" ></canvas>
+                    <canvas id="smsOperatorPieChart" height="150" width="150"></canvas>
                 </div>
                 </div>
               </div>
@@ -327,6 +327,10 @@
 
     const ctx = document.getElementById('smsOperatorPieChart').getContext('2d');
 
+
+
+
+
     new Chart(ctx, {
         type: 'pie',
         data: {
@@ -334,8 +338,8 @@
             datasets: [{
                 data: values,
                 backgroundColor: [
-                    '#4CAF50', // Banglalink
-                    '#2196F3', // Robi
+                    '#bd5602', // Banglalink
+                    '#bd0202', // Robi
                     '#FF9800', // GP
                     '#9C27B0'  // Others
                 ],
@@ -344,6 +348,7 @@
         },
         options: {
             responsive: true,
+            
             plugins: {
                 legend: {
                     position: 'bottom'
@@ -356,6 +361,7 @@
                     }
                 }
             }
+            
         }
     });
 </script>
