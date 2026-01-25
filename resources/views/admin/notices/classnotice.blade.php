@@ -1,7 +1,7 @@
 @extends('layouts.adminlayout')
 
 @section('content')
-@foreach($class as $data)
+@foreach($students as $data)
 @endforeach
 <div class="col-12 grid-margin stretch-card">
   <div class="card">
@@ -44,7 +44,7 @@
 </div>
 
      
-      <form id="smsForm" class="forms-sample" action="{{route('classStudentNotice')}}" method="POST" enctype="multipart/form-data">
+      <form id="smsForm" class="forms-sample" action="{{route('sendGenNotice')}}" method="POST" enctype="multipart/form-data">
         @csrf
        
         <div class="form-group">

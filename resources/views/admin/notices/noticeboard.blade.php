@@ -37,7 +37,7 @@
         @csrf
        
         <div class="form-group">
-          <textarea class="form-control" id="exampleTextarea1" name="description" rows="10" readonly>{{$data->description}}</textarea>
+          <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10" readonly>{{$data->description}}</textarea>
         
     
           <button type="submit" class="btn btn-gradient-danger me-2">Send SMS Notice</button>
@@ -51,7 +51,7 @@
         @csrf
         @method('PUT')
         <div class="form-group">
-          <textarea class="form-control" id="exampleTextarea1" name="description" rows="10"></textarea>
+          <textarea class="form-control" id="exampleTextarea1" name="notice" rows="10"></textarea>
           <button type="submit" class="btn btn-gradient-primary me-2">Update</button>
         
           </div>

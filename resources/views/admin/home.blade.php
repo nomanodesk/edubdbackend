@@ -38,13 +38,13 @@
                 <div class="card bg-gradient-success card-img-holder text-white">
                   <div class="card-body">
                     <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Total SMS <i class="mdi mdi-diamond mdi-24px float-right"></i>
-                    </h4>
+                    <h4 class="font-weight-normal mb-3">Total SMS <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
                     <h2 class="mb-5">{{$smsCountThisMonth}}</h2>
-                   
-                  </div>
+                    <canvas id="smsOperatorPieChart" ></canvas>
+                </div>
                 </div>
               </div>
+       
             </div>
             <!-- <div class="row">
               <div class="col-md-7 grid-margin stretch-card">
@@ -316,5 +316,48 @@
               </div>
             </div> -->
           </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const operatorData = @json($smsByOperator);
+
+    const labels = Object.keys(operatorData);
+    const values = Object.values(operatorData);
+
+    const ctx = document.getElementById('smsOperatorPieChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: [
+                    '#4CAF50', // Banglalink
+                    '#2196F3', // Robi
+                    '#FF9800', // GP
+                    '#9C27B0'  // Others
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.raw + ' SMS';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 @endsection

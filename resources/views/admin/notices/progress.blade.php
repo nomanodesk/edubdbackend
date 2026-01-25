@@ -24,7 +24,7 @@ let timer = setInterval(() => {
                     title: 'SMS Completed',
                     text: `Sent: ${data.sent}, Failed: ${data.failed}, Unregistered: ${data.unregistered}`
                 }).then(() => {
-                    window.location.href = "{{ route('notice_boards.index') }}";
+                    window.location.href = "{{ route('home') }}";
                 });
             }
         });

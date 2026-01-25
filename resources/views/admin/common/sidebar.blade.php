@@ -47,6 +47,13 @@
       </a>
     </li>
     <li class="nav-item">
+      <a class="nav-link" href="{{ route('sms.report.monthly', ['month' => now()->format('Y-m')]) }}"style="text-decoration:none">
+        <span class="menu-title">SMS History</span>
+        <i class="mdi mdi-office menu-icon"></i>
+      </a>
+    </li>
+    <a >
+    <li class="nav-item">
     <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
         <span class="menu-title">Log Out</span>
         <i class="mdi mdi-logout menu-icon"></i>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InstituteClass;
 use App\Models\Institution;
 use App\Models\StudentProfile;
+use Illuminate\Support\Facades\DB;
 use Auth;
 use Illuminate\Http\Request;
 use Image;
@@ -34,8 +35,14 @@ class InstitutionController extends Controller
                   ->count();
             // dd($total_classes);
 // SQL executed: SELECT COUNT(*) FROM users WHERE status = 'active'
+$smsByOperator = DB::table('sms_histories')
+        ->select('operator', DB::raw('COUNT(*) as total'))
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->groupBy('operator')
+        ->pluck('total', 'operator');
 
-            return view('admin.home', compact('institute','total_classes','total_students','smsCountThisMonth'));
+            return view('admin.home', compact('institute','total_classes','total_students','smsCountThisMonth','smsByOperator'));
         }
        
      }

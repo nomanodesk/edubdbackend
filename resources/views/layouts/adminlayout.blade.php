@@ -87,6 +87,8 @@
     <!-- <script type="text/javascript" src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.bootstrap5.min.js"></script> -->
     <script src="https://cdn.datatables.net/v/dt/dt-2.0.8/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -97,6 +99,7 @@
             });
         });
     </script>
+    
 
 </body>
 

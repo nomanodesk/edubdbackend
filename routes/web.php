@@ -9,6 +9,7 @@ use App\Http\Controllers\ClassSectionController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\StudentSchoolDataController;
+use App\Http\Controllers\SmsReportController;
 use App\Models\StudentSchoolData;
 
 /*
@@ -44,20 +45,22 @@ Route::resource('student_school_data', StudentSchoolDataController::class);
 Route::get('/getsection/{id}', [ClassSectionController::class, 'index'])->name('getsection');
 Route::post('/addsection', [ClassSectionController::class, 'create'])->name('addsection');
 Route::post('/sendGenNotice', [NoticeBoardController::class, 'sendGenNotice'])->name('sendGenNotice');
-Route::get('/notice-progress/{key}', function ($key) {
-    return view('admin.notices.progress', compact('key'));
-})->name('notice.progress');
-
-
-Route::get('/notice-progress-status/{key}', [NoticeBoardController::class, 'smsProgressStatus'])->name('notice.progress.status');
-
-
-
-
 Route::get('/student-notice/{id}', [NoticeBoardController::class, 'noticepage'])->name('noticepage');
 Route::post('/sendStudentNotice', [NoticeBoardController::class, 'sendStudentNotice'])->name('sendStudentNotice');
 Route::get('/class-notice/{id}', [NoticeBoardController::class, 'classnoticepage'])->name('classnoticepage');
 Route::post('/classStudentNotice', [NoticeBoardController::class, 'classStudentNotice'])->name('classStudentNotice');
+
+
+Route::get('/notice-progress-status/{key}', [NoticeBoardController::class, 'smsProgressStatus'])->name('notice.progress.status');
+Route::get('/sms-report/monthly',[SmsReportController::class, 'monthlyReport'])->name('sms.report.monthly');
+Route::get('/sms-report/export',[SmsReportController::class, 'exportMonthly'])->name('sms.report.export');
+
+
+
+
+
+
+
 Route::get('/classNoticeReport', [NoticeBoardController::class, 'classnoticereport'])->name('classnoticereport');
 
 Route::post('/students/import', [StudentProfileController::class, 'importExcel'])->name('students.import');
