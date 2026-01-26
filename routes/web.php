@@ -23,14 +23,15 @@ use App\Models\StudentSchoolData;
 |
 */
 
+
+
 Route::get('/', function () {
     // return view('welcome');
-    return redirect(route('login'));
+return redirect(route('login'));
 });
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\InstitutionController::class, 'dashboard'])->name('home');
+Route::get('/home', [App\Http\Controllers\InstitutionController::class, 'dashboard'])->name('home')->middleware('auth');;
 
 Route::resource('institutions', InstitutionController::class);
 Route::resource('institute_classes', InstitueClassController::class);

@@ -14,7 +14,7 @@
             </div>
             <div class="row">
               <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card bg-gradient-secondary card-img-holder text-black">
                   <div class="card-body">
                     <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Total Classes <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
@@ -24,21 +24,22 @@
                 </div>
               </div>
               <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card bg-gradient-secondary card-img-holder text-black">
                   <div class="card-body">
-                    <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" />
+                    <!-- <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" /> -->
                     <h4 class="font-weight-normal mb-3">Total Students <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                     </h4>
                     <h2 class="mb-5">{{$total_students}}</h2>
+                    <canvas id="studentsBarChart" height="150" width="150"></canvas>
               
                   </div>
                 </div>
               </div>
               <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-secondary card-img-holder text-white">
+                <div class="card bg-gradient-secondary card-img-holder text-black">
                   <div class="card-body">
-                    <img src="{{asset('admin/images/dashboard/circle.svg')}}" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Total SMS <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
+                    
+                    <h4 class="font-weight-normal mb-3">Total SMS {{ now()->format('F Y') }} <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
                     <h2 class="mb-5">{{$smsCountThisMonth}}</h2>
                     <canvas id="smsOperatorPieChart" height="150" width="150"></canvas>
                 </div>
@@ -316,7 +317,7 @@
               </div>
             </div> -->
           </div>
-  
+          @section('scripts')  
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -325,14 +326,12 @@
     const labels = Object.keys(operatorData);
     const values = Object.values(operatorData);
 
+    const total = values.reduce((a, b) => a + b, 0);
+
     const ctx = document.getElementById('smsOperatorPieChart').getContext('2d');
 
-
-
-
-
     new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
@@ -348,22 +347,97 @@
         },
         options: {
             responsive: true,
-            
+            onHover: (event, elements) => {
+        const canvas = event.chart.canvas;
+        if (elements.length > 0) {
+            canvas.style.cursor = 'pointer';   // hand icon (clickable)
+        } else {
+            canvas.style.cursor = 'default';
+        }
+    },
             plugins: {
                 legend: {
                     position: 'bottom'
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            return context.label + ': ' + context.raw + ' SMS';
+                        label: function (context) {
+                            const count = context.raw;
+                            const percentage = ((count / total) * 100).toFixed(1);
+                            return `${context.label}: ${count} SMS (${percentage}%)`;
                         }
                     }
                 }
+            },
+
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const operator = labels[index];
+                    window.location.href =
+                        "{{ route('sms.report.monthly') }}?operator=" + encodeURIComponent(operator);
+                }
             }
-            
         }
     });
 </script>
 
+
+
+<script>
+const ctx1 = document.getElementById('studentsBarChart').getContext('2d');
+
+new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: ['Primary', 'Secondary', 'Higher Secondary'],
+        datasets: [
+            {
+                label: 'Morning Shift',
+                data: [
+                    {{ $classchartData['Primary']['Morning'] }},
+                    {{ $classchartData['Secondary']['Morning'] }},
+                    {{ $classchartData['Higher Secondary']['Morning'] }}
+                ],
+                backgroundColor: '#4CAF50'
+            },
+            {
+                label: 'Day Shift',
+                data: [
+                    {{ $classchartData['Primary']['Day'] }},
+                    {{ $classchartData['Secondary']['Day'] }},
+                    {{ $classchartData['Higher Secondary']['Day'] }}
+                ],
+                backgroundColor: '#2196F3'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 }
+            }
+        },
+        plugins: {
+            legend: { position: 'bottom' },
+            
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                    title: function (tooltipItems) {
+                        return tooltipItems[0].label;
+                    },
+                    label: function (context) {
+                        return context.dataset.label + ': ' + context.raw + ' students';
+                    }
+                }
+              }
+        }
+   
+    }
+});
+</script>
+@endsection
 @endsection
